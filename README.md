@@ -2,11 +2,18 @@
 
 本项目旨在展示一种高效、现代且无副作用的树形数据管理模式。通过 JavaScript 的 `WeakMap` 特性，我们在内存中构建了一套“节点到父级”的扁平化索引系统，解决了树结构中最为棘手的“由子寻父”和“局部状态更新”问题。
 
+## 🚀 快速预览 (Live Demo)
+
+- **项目预览总入口**: [https://java6688.github.io/Tree_By_WeakMap/](https://java6688.github.io/Tree_By_WeakMap/)
+- **原生 HTML 版本**: [https://java6688.github.io/Tree_By_WeakMap/html/index.html](https://java6688.github.io/Tree_By_WeakMap/html/index.html)
+- **React + AntD 版本**: [https://java6688.github.io/Tree_By_WeakMap/react/index.html](https://java6688.github.io/Tree_By_WeakMap/react/index.html)
+- **Vue 3 + Element+ 版本**: [https://java6688.github.io/Tree_By_WeakMap/vue/index.html](https://java6688.github.io/Tree_By_WeakMap/vue/index.html)
+
 ---
 
 ## 🧠 抽象原理：为什么是 WeakMap？
 
-在传统的树结构处理中，如果需要获取某个节点的父级或祖先路径，通常有两种方案：
+在传统的树结构处理中，如果需要获取某个节点的父级 or 祖先路径，通常有两种方案：
 1. **递归搜索**：每次查找都遍历整棵树，时间复杂度为 $O(N)$。
 2. **手动挂载 `parent` 属性**：在原始数据上强行注入父节点引用。
 
@@ -156,6 +163,8 @@ const { ...methods } = useTree({
 | **开发侵入性** | 无 | 高 (修改原始对象) | **无 (完全隔离)** |
 | **内存管理** | 自动 | 需手动置空防泄漏 | **自动 (弱引用特性)** |
 
+---
+
 ## 🚀 运行与部署指南
 
 ### 1. 本地运行
@@ -166,12 +175,12 @@ const { ...methods } = useTree({
 ### 2. GitHub Pages 部署
 本项目已配置 GitHub Actions 自动化部署工作流。您可以按照以下步骤将三个项目同时部署到 GitHub Pages：
 
-1. **推送代码**: 将代码推送到 GitHub 仓库的 `main` 分支。
-2. **自动化构建**: GitHub Actions 会自动触发 `.github/workflows/deploy.yml`，完成 React 和 Vue 项目的构建。
+1. **推送代码**: 将代码推送到 GitHub 仓库的 `main` 分支（或您配置的生产分支）。
+2. **自动化构建**: GitHub Actions 会自动触发 `.github/workflows/deploy.yml`，完成 React 和 Vue 项目的构建并发布到 `gh-pages` 分支。
 3. **开启 Pages**:
    - 进入 GitHub 仓库设置 `Settings > Pages`。
    - 在 `Build and deployment > Branch` 中选择 `gh-pages` 分支和 `/(root)` 目录。
-4. **访问地址**: 部署完成后，您可以通过 `https://<您的用户名>.github.io/<仓库名>/` 访问导航页，从而跳转到各个演示项目。
+4. **访问预览**: 部署完成后即可通过本文档开头的 [🚀 快速预览](#-快速预览-live-demo) 链接进行访问。
 
 ---
 © 2026 Tree to Flat Project - 探索更优雅的数据结构管理。
