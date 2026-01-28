@@ -20,85 +20,130 @@
 
 ---
 
-## 🛠️ 项目深度拆解与使用细节
+## 🛠️ useTree API 详细参考与示例
 
-### 1. 原生 HTML/JS 实现：DOM 与数据的精准绑定
-在原生开发中，本项目通过双重索引解决了 DOM 元素、业务数据与父级关系之间的关联。
+以下示例均基于以下示例数据：
+```javascript
+const treeData = [
+  { id: '1', name: '部门A', children: [
+    { id: '1-1', name: '小组A-1', children: [
+      { id: '1-1-1', name: '成员X' }
+    ]}
+  ]}
+];
+```
 
-- **实现细节**：
-    - `_treeWeakMap`：存储 `Node -> Parent | List`。如果是根节点，其父级指向整个树数据数组。
-    - `_domDataMap`：存储 `HTMLElement -> NodeData`，实现从视图层到数据层的秒级跳转。
-- **具体示例**：
-    ```javascript
-    // html/tree.js
-    function handleAction(action, node) {
-        if (action === 'delete') {
-            const parent = getParent(node); // 从 WeakMap 获取
-            if (_isRootNode(parent)) {
-                // 如果父级是数组，说明是根节点
-                const index = parent.findIndex(item => item === node);
-                parent.splice(index, 1);
-            } else {
-                // 如果是普通节点，从父节点的 children 中过滤
-                parent[treeNodeProp.children] = parent[treeNodeProp.children].filter(item => item !== node);
-            }
-            render(); // 重新构建索引并渲染
-        }
-    }
-    ```
-- **源码参考**：[tree.js](file:///html/tree.js)
+### 1. Hook 初始化
 
-### 2. React + Ant Design：Hook 驱动的持久化索引
-React 版本展示了如何将索引逻辑封装为可复用的 Hook，并处理组件重渲染带来的引用问题。
+```typescript
+const { ...methods } = useTree({
+  treeNodeProp: { value: 'id', label: 'name', children: 'children' }
+});
+```
 
-- **实现细节**：
-    - 使用 `useRef(new WeakMap())` 确保 `WeakMap` 实例在组件生命周期内唯一。
-    - `initTree` 方法支持自定义字段名（label/value/children）。
-- **具体示例**：
-    ```tsx
-    // react_demo/src/hooks/useTree.ts
-    const { getParentLabels, initTree } = useTree({
-        treeNodeProp: { label: 'name', value: 'id', children: 'children' }
-    });
+---
 
-    // 路径回溯逻辑：使用 while 循环向上追溯
-    const getParents = useCallback((item, parentList = [], key) => {
-        let current = item;
-        const result = [...parentList];
-        while (true) {
-            const parent = treeWeakMap.current.get(current);
-            if (parent && !isRootNode(parent)) {
-                result.push(key ? parent[key] : parent);
-                current = parent;
-            } else {
-                break;
-            }
-        }
-        return result;
-    }, []);
-    ```
-- **源码参考**：[useTree.ts (React)](file:///react_demo/src/hooks/useTree.ts)
+### 2. 方法详解与输出示例
 
-### 3. Vue 3：Composition API 与响应式考量
-Vue 版本强调了在 Proxy 响应式系统下，如何保持节点引用的一致性。
+#### **`initTree(list, parent?)`**
+初始化树形结构的影子索引。
+- **示例**:
+  ```javascript
+  initTree(treeData);
+  console.log('索引构建完成');
+  ```
 
-- **实现细节**：
-    - `getParents` 采用 **递归方式** 实现，展示了另一种逻辑风格。
-    - 在 `addChild` 时，特别注意了 Proxy 处理后的节点引用注册。
-- **具体示例**：
-    ```typescript
-    // vue_demo/src/hooks/useTree.ts
-    function getParents(item: TreeNode, parentList: (TreeNode | string)[] = [], key?: string) {
-        const parent = _treeWeakMap.get(item);
-        // 递归向上追溯直到根节点数组
-        if (parent && !_isRootNode(parent)) {
-            parentList.push(key ? parent[key] : parent);
-            getParents(parent, parentList, key);
-        }
-        return parentList;
-    }
-    ```
-- **源码参考**：[useTree.ts (Vue)](file:///vue_demo/src/hooks/useTree.ts)
+#### **`getParent(node)`**
+获取当前节点的直接父级。
+- **示例**:
+  ```javascript
+  const target = treeData[0].children[0].children[0]; // 成员X
+  const parent = getParent(target);
+  console.log(parent.name);
+  // 输出: "小组A-1"
+
+  const rootParent = getParent(treeData[0]);
+  console.log(Array.isArray(rootParent));
+  // 输出: true (根节点的父级是原始数组本身)
+  ```
+
+#### **`getParents(item, parentList?, key?)`**
+获取当前节点的所有祖先路径。
+- **示例**:
+  ```javascript
+  const target = treeData[0].children[0].children[0]; // 成员X
+
+  // 1. 获取对象路径
+  const parents = getParents(target);
+  console.log(parents.map(p => p.name));
+  // 输出: ["小组A-1", "部门A"]
+
+  // 2. 获取特定字段路径
+  const ids = getParents(target, [], 'id');
+  console.log(ids);
+  // 输出: ["1-1", "1"]
+  ```
+
+#### **`getParentLabels(item)`**
+快捷获取所有祖先节点的名称路径。
+- **示例**:
+  ```javascript
+  const target = treeData[0].children[0].children[0]; // 成员X
+  const labels = getParentLabels(target);
+  console.log(labels);
+  // 输出: ["小组A-1", "部门A"]
+  ```
+
+#### **`getParentValues(item)`**
+快捷获取所有祖先节点的 ID 路径。
+- **示例**:
+  ```javascript
+  const target = treeData[0].children[0].children[0]; // 成员X
+  const values = getParentValues(target);
+  console.log(values);
+  // 输出: ["1-1", "1"]
+  ```
+
+#### **`addChild(node, child)`**
+向指定节点添加子节点。
+- **示例**:
+  ```javascript
+  const parentNode = treeData[0]; // 部门A
+  const newNode = { id: '1-2', name: '小组A-2' };
+
+  addChild(parentNode, newNode);
+
+  console.log(parentNode.children.length); // 输出: 2
+  console.log(getParent(newNode).name);   // 输出: "部门A" (索引已同步)
+  ```
+
+#### **`removeChild(node)`**
+删除指定节点。
+- **示例**:
+  ```javascript
+  const target = treeData[0].children[0]; // 小组A-1
+
+  removeChild(target);
+
+  console.log(treeData[0].children.length); // 输出: 1 (仅剩小组A-2)
+  console.log(getParent(target));           // 输出: undefined (索引已清理)
+  ```
+
+---
+
+## 🔍 项目深度拆解
+
+### 1. 原生 HTML/JS 实现
+- **核心逻辑**: 通过 `_treeWeakMap` 存储 `Node -> Parent`，通过 `_domDataMap` 存储 `HTMLElement -> NodeData`。
+- **源码参考**: [tree.js](file:///html/tree.js)
+
+### 2. React + Ant Design
+- **核心逻辑**: 使用 `useRef` 持久化 `WeakMap`，结合 `useCallback` 优化性能。
+- **源码参考**: [useTree.ts (React)](file:///react_demo/src/hooks/useTree.ts) | [App.tsx (React)](file:///react_demo/src/App.tsx)
+
+### 3. Vue 3 + Element Plus
+- **核心逻辑**: 在 Composition API 中封装，通过递归处理 `getParents`。
+- **源码参考**: [useTree.ts (Vue)](file:///vue_demo/src/hooks/useTree.ts) | [App.vue (Vue)](file:///vue_demo/src/App.vue)
 
 ---
 
@@ -113,9 +158,9 @@ Vue 版本强调了在 Proxy 响应式系统下，如何保持节点引用的一
 
 ## 🚀 运行指南
 
-1. **HTML 版**：直接浏览器打开 `html/index.html`。
-2. **React 版**：进入 `react_demo` 目录，执行 `pnpm i` 及其 `pnpm dev`。
-3. **Vue 版**：进入 `vue_demo` 目录，执行 `pnpm i` 及其 `pnpm dev`。
+1. **HTML 版**: 直接浏览器打开 `html/index.html`。
+2. **React 版**: `cd react_demo && pnpm i && pnpm dev`。
+3. **Vue 版**: `cd vue_demo && pnpm i && pnpm dev`。
 
 ---
 © 2026 Tree to Flat Project - 探索更优雅的数据结构管理。
