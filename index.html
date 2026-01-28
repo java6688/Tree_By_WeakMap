@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree to Flat with WeakMap - Demos</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #1a1a1a;
+        }
+        h1 { margin-bottom: 2rem; color: #000; }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            width: 90%;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+        .card h2 { margin-top: 0; color: #1890ff; }
+        .card p { color: #666; font-size: 0.9rem; }
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+        .tag-html { background: #e34c26; color: white; }
+        .tag-react { background: #61dafb; color: #000; }
+        .tag-vue { background: #42b883; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Tree to Flat with WeakMap 演示项目</h1>
+    <div class="container">
+        <a href="./html/index.html" class="card">
+            <h2>原生 HTML 版</h2>
+            <p>使用纯 JavaScript 实现的 WeakMap 索引方案，最直观的核心逻辑展示。</p>
+            <span class="tag tag-html">HTML / JS</span>
+        </a>
+        <a href="./react/index.html" class="card">
+            <h2>React 版</h2>
+            <p>结合 Ant Design Tree 组件，展示在 React 环境下如何利用 Hook 管理树索引。</p>
+            <span class="tag tag-react">React / AntD</span>
+        </a>
+        <a href="./vue/index.html" class="card">
+            <h2>Vue 3 版</h2>
+            <p>结合 Element Plus，展示在 Vue 3 响应式系统中利用 WeakMap 进行树操作。</p>
+            <span class="tag tag-vue">Vue 3 / Element+</span>
+        </a>
+    </div>
+</body>
+</html>
