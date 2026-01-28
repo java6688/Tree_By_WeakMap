@@ -156,11 +156,22 @@ const { ...methods } = useTree({
 | **开发侵入性** | 无 | 高 (修改原始对象) | **无 (完全隔离)** |
 | **内存管理** | 自动 | 需手动置空防泄漏 | **自动 (弱引用特性)** |
 
-## 🚀 运行指南
+## 🚀 运行与部署指南
 
-1. **HTML 版**: 直接浏览器打开 `html/index.html`。
-2. **React 版**: `cd react_demo && pnpm i && pnpm dev`。
-3. **Vue 版**: `cd vue_demo && pnpm i && pnpm dev`。
+### 1. 本地运行
+- **HTML 版**: 直接浏览器打开 `html/index.html`。
+- **React 版**: `cd react_demo && pnpm i && pnpm dev`。
+- **Vue 版**: `cd vue_demo && pnpm i && pnpm dev`。
+
+### 2. GitHub Pages 部署
+本项目已配置 GitHub Actions 自动化部署工作流。您可以按照以下步骤将三个项目同时部署到 GitHub Pages：
+
+1. **推送代码**: 将代码推送到 GitHub 仓库的 `main` 分支。
+2. **自动化构建**: GitHub Actions 会自动触发 `.github/workflows/deploy.yml`，完成 React 和 Vue 项目的构建。
+3. **开启 Pages**:
+   - 进入 GitHub 仓库设置 `Settings > Pages`。
+   - 在 `Build and deployment > Branch` 中选择 `gh-pages` 分支和 `/(root)` 目录。
+4. **访问地址**: 部署完成后，您可以通过 `https://<您的用户名>.github.io/<仓库名>/` 访问导航页，从而跳转到各个演示项目。
 
 ---
 © 2026 Tree to Flat Project - 探索更优雅的数据结构管理。

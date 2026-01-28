@@ -1,0 +1,58 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # 监听 main 分支的推送
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      # 1. 构建 React 项目
+      - name: Build React Demo
+        run: |
+          cd react_demo
+          pnpm install
+          pnpm build
+
+      # 2. 构建 Vue 项目
+      - name: Build Vue Demo
+        run: |
+          cd vue_demo
+          pnpm install
+          pnpm build
+
+      # 3. 准备部署目录 (public 文件夹)
+      - name: Prepare Public Folder
+        run: |
+          mkdir -p public
+          cp index.html public/
+          cp -r html public/
+          cp -r react_demo/dist public/react
+          cp -r vue_demo/dist public/vue
+
+      # 4. 部署到 gh-pages 分支
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: public
+          branch: gh-pages
