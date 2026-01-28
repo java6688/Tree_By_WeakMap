@@ -1,0 +1,77 @@
+.antd-tree-container {
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.custom-tree-node {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-right: 8px;
+}
+
+.node-name {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.node-actions {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.custom-tree-node:hover .node-actions {
+  opacity: 1;
+}
+
+.action-btn {
+  font-size: 14px;
+  color: #909399;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.action-btn:hover {
+  background-color: #e4e7ed;
+}
+
+.action-btn.add:hover {
+  color: #67c23a;
+}
+
+.action-btn.rename:hover {
+  color: #409eff;
+}
+
+.action-btn.delete:hover {
+  color: #f56c6c;
+}
+
+/* 覆盖 antd 默认样式以匹配 Vue 效果 */
+.custom-antd-tree.ant-tree {
+  background: transparent;
+}
+
+.custom-antd-tree.ant-tree .ant-tree-node-content-wrapper:hover {
+  background-color: #f0f0f0;
+}
+
+.custom-antd-tree.ant-tree .ant-tree-node-selected {
+  background-color: #e3f2fd !important;
+  color: #1976d2;
+}
+
+/* 调整 antd tree 的展开图标样式 */
+.custom-antd-tree.ant-tree .ant-tree-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
